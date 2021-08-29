@@ -1,11 +1,19 @@
 @ECHO OFF
-NET STOP bits
-NET STOP wuauserv
+
+sc config "wuauserv" start= disabled
+net stop wuauserv
+net stop bits
+net stop trustedinstaller
+
 ping 127.0.0.1 > nul
 IF EXIST %windir%\SoftwareDistribution.OLD RD /S /Q %windir%\SoftwareDistribution.OLD
-CD %windir%
-REN SoftwareDistribution SoftwareDistribution.OLD
+
+rename "%windir%\SoftwareDistribution" "SoftwareDistribution.OLD"
 ping 127.0.0.1 > nul
-NET START wuauserv
-NET START bits
+
+sc config "wuauserv" start= auto
+net start wuauserv
+net start bits
+net start trustedinstaller
+
 ping 127.0.0.1 > nul
